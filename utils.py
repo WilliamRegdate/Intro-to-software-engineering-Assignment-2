@@ -12,7 +12,7 @@ def find_by_name(name, items):
     """
 
     for current_item in items:
-        if item.name == name:
-            return item
+        if current_item.name == name:
+            return current_item
     
     return None
