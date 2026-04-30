@@ -5,14 +5,14 @@ A few basic tests for the veterinary practice application.
 import appointment
 from appointment import Appointment
 from prescription import PrescriptionStatus
-from veterinary_practice import veterinary_practice
+from veterinary_practice import VeterinaryPractice
 
-vp = veterinary_practice()
+vp = VeterinaryPractice()
 
 def setup():
     """ Create a pet to be used by the different tests """
     global vp
-    vp = veterinary_practice()    
+    vp = VeterinaryPractice()    
     vp.register_pet("Kitty", "Tim", "cat") 
     return vp.find_owner("Tim").find_pet("Kitty")
 
