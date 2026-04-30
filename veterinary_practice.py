@@ -66,7 +66,7 @@ class VeterinaryPractice:
 
         if existing_medication is None:
             existing_medication = Medication(medication_name, amount)
-            self.medications.append(medication)
+            self.medications.append(existing_medication)
         else:
             existing_medication.restock(amount)
 
