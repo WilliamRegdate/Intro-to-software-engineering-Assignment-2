@@ -1,4 +1,9 @@
+""" pet.py
+Contains the Pet class.
+
+"""
 from prescription import Prescription
+
 
 class Pet:
     def __init__(self, name, owner, species):
@@ -12,7 +17,7 @@ class Pet:
 
     def create_prescription(self, medication, dosage):
         prescription = Prescription(self, medication, dosage)
-        self.prescriptions.append( prescription )
+        self.prescriptions.append(prescription)
         return prescription
     
     def add_vaccination(self, vaccination):
