@@ -2,6 +2,7 @@
 Contains the Prescription class and the PrescriptionStatus enum.
 """
 from enum import Enum
+from observer import Observer
 
 
 class PrescriptionStatus(Enum):
@@ -12,7 +13,7 @@ class PrescriptionStatus(Enum):
     collected = 4 # end status: the medication has been collected.
 
 
-class Prescription():
+class Prescription(Observer):
     """
     When the prescription is created:
         If enough medication is in stock, the prescription status is preparing_order.
@@ -36,6 +37,7 @@ class Prescription():
         self.dosage = dosage
         
         self._prepare_or_wait_for_stock()
+        self.medication.add_observer(self)
 
 
     def _prepare_or_wait_for_stock(self):
@@ -54,10 +56,10 @@ class Prescription():
         """
         if self.status == PrescriptionStatus.preparing_order:
             self.medication.reduce_stock(self.dosage)
+            self.medication.remove_observer(self)
             self.status = PrescriptionStatus.ready_for_collection
             return True
-        else:
-            return False
+        return False
             
     def collect(self):
         """ If the status is ready_for_collection, the order becomes collected
@@ -69,5 +71,14 @@ class Prescription():
             return True
         else:
             return False
+        
+    def update(self):
+        if self.status == PrescriptionStatus.ready_for_collection:
+            return  # no longer needs updates
+
+        if self.medication.has_enough_stock(self.dosage):
+            self.status = PrescriptionStatus.preparing_order
+        else:
+            self.status = PrescriptionStatus.out_of_stock
 #EOF
 #----

@@ -74,3 +74,28 @@ def test_prescription_with_stock():
     # collect the prescription
     vp.collect_prescription(id)
     assert prescription.status == PrescriptionStatus.collected
+
+def test_prescription_updates_when_stock_changes():
+    """Test that prescriptions automatically update when medication stock changes (Observer pattern)."""
+    pet = setup()
+
+    # create medication with low stock initially
+    vp.stock_medication("med1", 1)
+    med = vp.find_medication("med1")
+
+    # create prescription that cannot currently be fulfilled
+    prescription_id = vp.create_prescription(pet, med, 3)
+    prescription = vp.find_prescription(prescription_id)
+
+    # initially should be out of stock
+    assert prescription.status == PrescriptionStatus.out_of_stock
+
+    # increase stock -> should notify prescription and update status automatically
+    vp.stock_medication("med1", 5)
+
+    assert prescription.status == PrescriptionStatus.preparing_order
+
+    # reduce stock again -> should notify and update back to out_of_stock
+    vp.stock_medication("med1", -10)
+
+    assert prescription.status == PrescriptionStatus.out_of_stock
