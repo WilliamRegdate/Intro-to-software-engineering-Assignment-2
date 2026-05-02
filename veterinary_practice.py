@@ -91,7 +91,7 @@ class VeterinaryPractice:
         if prescription is None:
             return "Unrecognized prescription ID"
 
-        if prescription.prepareForCollection():
+        if prescription.prepare_for_collection():
             return "Prescription prepared"
 
         return "Prescription is not ready for preparation"
