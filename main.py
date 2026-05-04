@@ -4,6 +4,7 @@ The UI menu is displayed to the user until they choose to exit the application.
 
 """
 
+from appointment_decorator import VaccinationDecorator, SurgeryDecorator
 from appointment import Appointment
 from veterinary_practice import VeterinaryPractice
 
@@ -85,10 +86,9 @@ class UserInterface:
         print("Enter appointment date and time (any string is accepted):")
         appointment_time = input()
 
-        #--------
-        # modify this line of code to try out your decorator pattern.
         appointment = Appointment(pet, appointment_time)
-        #---------
+        appointment = VaccinationDecorator(appointment)
+        appointment = SurgeryDecorator(appointment)
 
         # add the appointment to the vet's list
         appointment_id = self.veterinary_practice.create_appointment(appointment)
