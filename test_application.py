@@ -3,6 +3,8 @@ A few basic tests for the veterinary practice application.
 (Many more tests should be used -- no need to add tests for the provided code but you may wish to add test to help you develop/test the code you add.)
 """
 import appointment
+import appointment_decorator
+from appointment_decorator import VaccinationDecorator, SurgeryDecorator
 from appointment import Appointment
 from prescription import PrescriptionStatus
 from veterinary_practice import VeterinaryPractice
@@ -26,20 +28,25 @@ def test_register_pet():
     pet = owner.find_pet("Kitty")
     assert pet.name == "Kitty"
 
-def test_appointments():
-    """NOTE: You could add a similar test for checking your decorated appointment works"""
-    pet = setup() # creates a pet    
-    appointment.input = lambda: "input" # overrides the input() function within the appointment.py file.
+def test_appointments(monkeypatch):
+    pet = setup()
 
-    a = Appointment(pet, "Today") #<-- change this line to test your appointment code
+    monkeypatch.setattr("builtins.input", lambda: "input")
+
+    a = Appointment(pet, "Today")
+    a = VaccinationDecorator(a)
+    a = SurgeryDecorator(a)
+
     vp.create_appointment(a)
 
     notes = vp.attend_appointment(0)
-    
-    assert notes == ['weight= input', 'input']
-    # to test your appointment code:
-    #assert notes == ['weight= input', 'input', 'vaccination = input', 'vaccination = input', 'surgery= input']
 
+    assert notes == [
+        "weight= input",
+        "input",
+        "vaccination=input",
+        "surgery notes=input"
+    ]
 
 def test_prescription_too_little_stock():
     """NOTE: You could extend this test to test your observer pattern works"""
@@ -76,7 +83,6 @@ def test_prescription_with_stock():
     assert prescription.status == PrescriptionStatus.collected
 
 def test_prescription_updates_when_stock_changes():
-    """Test that prescriptions automatically update when medication stock changes (Observer pattern)."""
     pet = setup()
 
     # create medication with low stock initially
